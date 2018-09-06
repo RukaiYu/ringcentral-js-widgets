@@ -933,11 +933,6 @@ export default class ConferenceCall extends RcModule {
     return this.state.currentConferenceId;
   }
 
-
-  get lastCallInfo() {
-    return this._lastCallInfoSession;
-  }
-
   @getter
   lastCallInfo = createSelector(
     () => this._webphone.sessions,
@@ -953,10 +948,10 @@ export default class ConferenceCall extends RcModule {
         session => session.id === fromSessionId
       );
 
-      const toMatches = (
+      const toMatches = (lastCall && (
         this._contactMatcher.dataMapping &&
         this._contactMatcher.dataMapping[lastCall.to]
-      ) || [];
+      )) || [];
 
       let lastCalleeType;
       if (lastCall) {
@@ -1004,7 +999,7 @@ export default class ConferenceCall extends RcModule {
             avatarUrl: toMatches[0].profileImageUrl,
             name: toMatches[0].name,
             status: lastCall.callStatus,
-            phoneNumber: lastCall.to.phoneNumber,
+            phoneNumber: lastCall.to,
             extraNum: 0,
             lastCallContact: toMatches[0],
           };
@@ -1015,7 +1010,7 @@ export default class ConferenceCall extends RcModule {
             avatarUrl: null,
             name: null,
             status: lastCall ? lastCall.callStatus : null,
-            phoneNumber: lastCall.to.phoneNumber,
+            phoneNumber: lastCall.to,
             extraNum: 0,
             lastCallContact: null,
           };
