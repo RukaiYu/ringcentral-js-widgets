@@ -357,7 +357,7 @@ export function subscription(mockResponse = {}) {
   });
 }
 
-export function numberParser(mockResponse = {}, isOnce = true) {
+export function numberParser(mockResponse = {}, isOnce = false) {
   mockApi({
     method: 'POST',
     url: `begin:${mockServer}/restapi/v1.0/number-parser/`,
@@ -577,7 +577,17 @@ export function serviceInfo(mockResponse = {}) {
     isOnce: false
   });
 }
-
+export function recentActivity(mockResponse = {}, isOnce = false) {
+  mockApi({
+    method: 'GET',
+    url: new RegExp(`${mockServer}/restapi/v1.0/account/~/extension/~/call-log`),
+    body: {
+      ...callLogBody,
+      ...mockResponse,
+    },
+    isOnce
+  });
+}
 export function mockForLogin({
   mockAuthzProfile = true,
   mockExtensionInfo = true,
@@ -586,6 +596,8 @@ export function mockForLogin({
   mockConferencing = true,
   mockActiveCalls = true,
   mockUpdateConference = false,
+  mockNumberParser = true,
+  mockRecentActivity = false,
   ...params
 } = {}) {
   authentication();
@@ -622,9 +634,14 @@ export function mockForLogin({
   if (mockActiveCalls) {
     activeCalls(params.activeCallsData);
   }
-  numberParser(params.numberParseData, params.numberParseIsOnce);
+  if (mockNumberParser) {
+    numberParser(params.numberParseData, params.numberParseIsOnce);
+  }
   if (mockUpdateConference) {
     conferenceCall();
     updateConferenceCall(updateConferenceCallBody.id, updateConferenceCallBody);
+  }
+  if (mockRecentActivity) {
+    recentActivity();
   }
 }
